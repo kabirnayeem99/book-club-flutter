@@ -12,8 +12,9 @@ class OurSignupScreen extends StatelessWidget {
         children: [
           Expanded(
             child: ListView(
-              padding: EdgeInsets.fromLTRB(20, 28 , 20, 20),
+              padding: EdgeInsets.fromLTRB(20, 28, 20, 20),
               children: [
+                // back button
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
@@ -21,6 +22,8 @@ class OurSignupScreen extends StatelessWidget {
                   ],
                 ),
                 SizedBox(height: MediaQuery.of(context).size.height * 0.1),
+
+                // card like form
                 OurSignupFormWidget(),
               ],
             ),
