@@ -1,6 +1,7 @@
 import 'package:book_club_flutter/screens/home_screen/home_screen.dart';
 import 'package:book_club_flutter/screens/signup_screen/signup_screen.dart';
 import 'package:book_club_flutter/states/current_user.dart';
+import 'package:book_club_flutter/utils/Resources.dart';
 import 'package:book_club_flutter/widgets/container.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -21,13 +22,14 @@ class _OurLoginFormState extends State<OurLoginForm> {
         Provider.of<CurrentUserState>(context, listen: false);
 
     try {
-      bool isLoggedIn = await _userState.loginUser(email, password);
-      if (isLoggedIn) {
+      OurResource _logInResource =
+          await _userState.loginUserWithEmail(email, password);
+      if (_logInResource is OurSuccess) {
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => OurHomeScreen()));
       } else {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text("Could not login.")));
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(_logInResource.errorMessage!)));
       }
     } catch (e) {
       print(e);

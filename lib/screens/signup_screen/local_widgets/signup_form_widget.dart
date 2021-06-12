@@ -1,4 +1,5 @@
 import 'package:book_club_flutter/states/current_user.dart';
+import 'package:book_club_flutter/utils/Resources.dart';
 import 'package:book_club_flutter/utils/Utilities.dart';
 import 'package:book_club_flutter/widgets/container.dart';
 import 'package:flutter/cupertino.dart';
@@ -21,8 +22,14 @@ class OurSignupFormWidget extends StatelessWidget {
           Provider.of<CurrentUserState>(context, listen: false);
 
       try {
-        if (await _currentUserState.signUpUser(email, password)) {
+        OurResource _signUpResource =
+            await _currentUserState.signUpUserWithEmail(email, password);
+
+        if (_signUpResource is OurSuccess) {
           Navigator.pop(context);
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(_signUpResource.errorMessage!)));
         }
       } catch (e) {
         print("could not sign up" + e.toString());

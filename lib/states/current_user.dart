@@ -1,3 +1,4 @@
+import 'package:book_club_flutter/utils/Resources.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -11,43 +12,43 @@ class CurrentUserState extends ChangeNotifier {
 
   FirebaseAuth _auth = FirebaseAuth.instance;
 
-  Future<bool> signUpUser(String email, String password) async {
-    bool isSignedUp = false;
+  Future<OurResource> signUpUserWithEmail(String email, String password) async {
+    late OurResource _resource;
     try {
       UserCredential _userCredential = await _auth
           .createUserWithEmailAndPassword(email: email, password: password);
 
       if (_userCredential.user != null) {
-        isSignedUp = true;
+        _resource = OurSuccess(_userCredential.user);
         _uid = _userCredential.user!.uid;
         _email = _userCredential.user!.email!;
       } else {
-        isSignedUp = false;
+        _resource = OurError("Unknown error");
       }
     } catch (e) {
-      isSignedUp = false;
-      print(e);
+      _resource = OurError(e.toString());
     }
-    return isSignedUp;
+    return _resource;
   }
 
-  Future<bool> loginUser(String email, String password) async {
-    bool isLoggedIn = false;
+  Future<OurResource> loginUserWithEmail(String email, String password) async {
+    late OurResource _resource;
+
     try {
       UserCredential _userCredential = await _auth.signInWithEmailAndPassword(
           email: email, password: password);
 
       if (_userCredential.user != null) {
-        isLoggedIn = true;
+        _resource = OurSuccess(_userCredential.user!);
         _uid = _userCredential.user!.uid;
         _email = _userCredential.user!.email!;
       } else {
-        isLoggedIn = false;
+        _resource = OurError("Unknown error");
       }
     } catch (e) {
-      isLoggedIn = false;
+      _resource = OurError(e.toString());
       print(e);
     }
-    return isLoggedIn;
+    return _resource;
   }
 }
