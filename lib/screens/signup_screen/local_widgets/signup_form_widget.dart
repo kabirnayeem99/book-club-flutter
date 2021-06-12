@@ -1,6 +1,6 @@
 import 'package:book_club_flutter/states/current_user.dart';
-import 'package:book_club_flutter/utils/Resources.dart';
-import 'package:book_club_flutter/utils/Utilities.dart';
+import 'package:book_club_flutter/utils/resource.dart';
+import 'package:book_club_flutter/utils/utilities.dart';
 import 'package:book_club_flutter/widgets/container.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';

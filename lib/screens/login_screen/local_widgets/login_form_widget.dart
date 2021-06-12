@@ -1,7 +1,7 @@
 import 'package:book_club_flutter/screens/home_screen/home_screen.dart';
 import 'package:book_club_flutter/screens/signup_screen/signup_screen.dart';
 import 'package:book_club_flutter/states/current_user.dart';
-import 'package:book_club_flutter/utils/Resources.dart';
+import 'package:book_club_flutter/utils/resource.dart';
 import 'package:book_club_flutter/widgets/container.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -36,6 +36,35 @@ class _OurLoginFormState extends State<OurLoginForm> {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text("Could not log in. $e.")));
     }
+  }
+
+  Widget _googleSignInButton() {
+    return OutlineButton(
+      splashColor: Colors.grey,
+      onPressed: () => {},
+      highlightElevation: 0.0,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Image(
+            image: AssetImage("assets/google_logo.png"),
+            height: 25.0,
+          ),
+          Padding(
+            padding: EdgeInsets.only(left: 10.0),
+            child: Text(
+              "Sign in with google.",
+              style: TextStyle(
+                fontSize: 20.0,
+                color: Colors.grey,
+              ),
+            ),
+          )
+        ],
+      ),
+    );
   }
 
   @override
@@ -102,8 +131,9 @@ class _OurLoginFormState extends State<OurLoginForm> {
               ),
             ),
           ),
+          SizedBox(height: 20.0),
+          _googleSignInButton(),
           SizedBox(height: 08.0),
-
           // register navigation button
           FlatButton(
             onPressed: () => {

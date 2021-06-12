@@ -1,4 +1,4 @@
-import 'package:book_club_flutter/utils/Resources.dart';
+import 'package:book_club_flutter/utils/resource.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -14,6 +14,7 @@ class CurrentUserState extends ChangeNotifier {
 
   Future<OurResource> signUpUserWithEmail(String email, String password) async {
     late OurResource _resource;
+    Error err = FlutterError("fdadf");
     try {
       UserCredential _userCredential = await _auth
           .createUserWithEmailAndPassword(email: email, password: password);
