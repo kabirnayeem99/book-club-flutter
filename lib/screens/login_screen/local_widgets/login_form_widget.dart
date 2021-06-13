@@ -17,7 +17,8 @@ class _OurLoginFormState extends State<OurLoginForm> {
   TextEditingController _emailTec = TextEditingController();
   TextEditingController _passwordTec = TextEditingController();
 
-  void _logInUser(String email, String password, BuildContext context) async {
+  void _logInUserWithEmail(
+      String email, String password, BuildContext context) async {
     CurrentUserState _userState =
         Provider.of<CurrentUserState>(context, listen: false);
 
@@ -26,10 +27,17 @@ class _OurLoginFormState extends State<OurLoginForm> {
           await _userState.loginUserWithEmail(email, password);
       if (_logInResource is OurSuccess) {
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => OurHomeScreen()));
+          context,
+          MaterialPageRoute(
+            builder: (context) => OurHomeScreen(),
+          ),
+        );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(_logInResource.errorMessage!)));
+          SnackBar(
+            content: Text(_logInResource.errorMessage!),
+          ),
+        );
       }
     } catch (e) {
       print(e);
@@ -38,10 +46,39 @@ class _OurLoginFormState extends State<OurLoginForm> {
     }
   }
 
-  Widget _googleSignInButton() {
+  void _logInUserWithGoogle(BuildContext context) async {
+    CurrentUserState _userState =
+        Provider.of<CurrentUserState>(context, listen: false);
+
+    try {
+      OurResource _logInResource = await _userState.logInUserWithGoogle();
+      if (_logInResource is OurSuccess) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => OurHomeScreen(),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(_logInResource.errorMessage!),
+          ),
+        );
+      }
+    } catch (e) {
+      print(e);
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text("Could not log in. $e.")));
+    }
+  }
+
+  Widget _googleSignInButton(BuildContext context) {
     return OutlineButton(
       splashColor: Colors.grey,
-      onPressed: () => {},
+      onPressed: () {
+        _logInUserWithGoogle(context);
+      },
       highlightElevation: 0.0,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
       child: Row(
@@ -61,7 +98,7 @@ class _OurLoginFormState extends State<OurLoginForm> {
                 color: Colors.grey,
               ),
             ),
-          )
+          ),
         ],
       ),
     );
@@ -113,7 +150,7 @@ class _OurLoginFormState extends State<OurLoginForm> {
             onPressed: () {
               if (_emailTec.text.trim().isNotEmpty &&
                   _passwordTec.text.trim().isNotEmpty) {
-                _logInUser(_emailTec.text, _passwordTec.text, context);
+                _logInUserWithEmail(_emailTec.text, _passwordTec.text, context);
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text("Text fields can't be empty")));
@@ -131,8 +168,6 @@ class _OurLoginFormState extends State<OurLoginForm> {
               ),
             ),
           ),
-          SizedBox(height: 20.0),
-          _googleSignInButton(),
           SizedBox(height: 08.0),
           // register navigation button
           FlatButton(
@@ -146,6 +181,10 @@ class _OurLoginFormState extends State<OurLoginForm> {
             child: Text("Don't have an account? Sign up here."),
             materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
           ),
+
+          // google sign in button
+          SizedBox(height: 20.0),
+          _googleSignInButton(context),
         ],
       ),
     );
