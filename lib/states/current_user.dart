@@ -4,14 +4,51 @@ import 'package:flutter/cupertino.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class CurrentUserState extends ChangeNotifier {
-  late String _uid;
-  late String _email;
+  late String? _uid;
+  late String? _email;
 
-  String get getUid => _uid;
+  String? get getUid => _uid;
 
-  String get getEmail => _email;
+  String? get getEmail => _email;
 
   FirebaseAuth _auth = FirebaseAuth.instance;
+
+  Future<OurResource> signOut() async {
+    late OurResource _resource;
+    try {
+      await _auth.signOut();
+      _uid = null;
+      _email = null;
+      _resource = OurSuccess(null);
+    } catch (e) {
+      _resource = OurError(e.toString());
+    }
+    return _resource;
+  }
+
+  /// Checks for current authentication status
+  ///
+  /// Returns a Future OurResource class, which can be either OurSuccess
+  /// with the returned data
+  /// or can be OurError with a String Error message.
+  Future<OurResource> onStartup() async {
+    late OurResource _resource;
+
+    try {
+      User? _user = _auth.currentUser;
+      if (_user != null) {
+        _resource = OurSuccess(_user);
+        _uid = _user.uid;
+        _email = _user.email!;
+      } else {
+        _resource = OurError("User is null");
+      }
+    } catch (e) {
+      _resource = OurError(e.toString());
+    }
+
+    return _resource;
+  }
 
   /// Registers the user with email and passwords
   ///

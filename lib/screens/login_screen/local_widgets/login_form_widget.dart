@@ -26,13 +26,13 @@ class _OurLoginFormState extends State<OurLoginForm> {
       OurResource _logInResource =
           await _userState.loginUserWithEmail(email, password);
       if (_logInResource is OurSuccess) {
-        Navigator.push(
+        Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(
-            builder: (context) => OurHomeScreen(),
-          ),
+          MaterialPageRoute(builder: (context) => OurHomeScreen()),
+          (route) => false,
         );
       } else {
+        print(_logInResource.errorMessage);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(_logInResource.errorMessage!),

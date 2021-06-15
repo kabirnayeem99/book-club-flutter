@@ -1,4 +1,5 @@
 import 'package:book_club_flutter/screens/login_screen/login_screen.dart';
+import 'package:book_club_flutter/screens/root_screen/root_screen.dart';
 import 'package:book_club_flutter/states/current_user.dart';
 import 'package:book_club_flutter/utils/theme.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -24,7 +25,7 @@ class OurApp extends StatelessWidget {
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: OurTheme().buildTheme(),
-        home: OurLoginScreen(),
+        home: OurRootScreen(),
       ),
     );
   }

@@ -1,0 +1,4 @@
+enum OurAuthStatus {
+  AUTHENTICATED,
+  NOT_AUTHENTICATED,
+}
