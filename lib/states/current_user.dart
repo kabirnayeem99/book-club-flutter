@@ -1,15 +1,13 @@
+import 'package:book_club_flutter/models/user.dart';
 import 'package:book_club_flutter/utils/resource.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class CurrentUserState extends ChangeNotifier {
-  late String? _uid;
-  late String? _email;
+  OurUser? _currentUser;
 
-  String? get getUid => _uid;
-
-  String? get getEmail => _email;
+  OurUser? get getCurrentUser => _currentUser;
 
   FirebaseAuth _auth = FirebaseAuth.instance;
 
@@ -17,9 +15,8 @@ class CurrentUserState extends ChangeNotifier {
     late OurResource _resource;
     try {
       await _auth.signOut();
-      _uid = null;
-      _email = null;
-      _resource = OurSuccess(null);
+      _currentUser = null;
+      _resource = OurSuccess(_currentUser);
     } catch (e) {
       _resource = OurError(e.toString());
     }
@@ -37,9 +34,8 @@ class CurrentUserState extends ChangeNotifier {
     try {
       User? _user = _auth.currentUser;
       if (_user != null) {
-        _resource = OurSuccess(_user);
-        _uid = _user.uid;
-        _email = _user.email!;
+        _currentUser = OurUser(email: _user.email!, uid: _user.uid);
+        _resource = OurSuccess(_currentUser);
       } else {
         _resource = OurError("User is null");
       }
@@ -64,9 +60,11 @@ class CurrentUserState extends ChangeNotifier {
           .createUserWithEmailAndPassword(email: email, password: password);
 
       if (_userCredential.user != null) {
-        _resource = OurSuccess(_userCredential.user);
-        _uid = _userCredential.user!.uid;
-        _email = _userCredential.user!.email!;
+        _currentUser = OurUser(
+          email: _userCredential.user!.email!,
+          uid: _userCredential.user!.uid,
+        );
+        _resource = OurSuccess(_currentUser);
       } else {
         _resource = OurError("Unknown error");
       }
@@ -92,11 +90,13 @@ class CurrentUserState extends ChangeNotifier {
           email: email, password: password);
 
       if (_userCredential.user != null) {
-        _resource = OurSuccess(_userCredential.user!);
-        _uid = _userCredential.user!.uid;
-        _email = _userCredential.user!.email!;
+        _currentUser = OurUser(
+          email: _userCredential.user!.email!,
+          uid: _userCredential.user!.uid,
+        );
+        _resource = OurSuccess(_currentUser);
       } else {
-        _resource = OurError("Unknown error");
+        _resource = OurError("User is null");
       }
     } catch (e) {
       _resource = OurError(e.toString());
@@ -133,11 +133,11 @@ class CurrentUserState extends ChangeNotifier {
         UserCredential _userCred = await _auth.signInWithCredential(_oAuthCred);
 
         if (_userCred.user == null) {
-          _resource = OurError("Null user");
+          _resource = OurError("User is null");
         } else {
           if (_googleSignIn.currentUser?.email != null) {
-            _email = _userCred.user!.email!;
-            _uid = _userCred.user!.uid;
+            _currentUser = OurUser(
+                email: _userCred.user!.email!, uid: _userCred.user!.uid);
             _resource = OurSuccess(_userCred.user);
           }
         }
