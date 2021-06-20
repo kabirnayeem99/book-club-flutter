@@ -1,9 +1,17 @@
+import 'package:book_club_flutter/screens/create_group_screen/create_group_screen.dart';
+import 'package:book_club_flutter/screens/join_group_screen/join_group_screen.dart';
 import 'package:flutter/material.dart';
 
 class OurNoGroupScreen extends StatelessWidget {
-  void _goToJoin() {}
+  void _goToJoin(BuildContext context) {
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => OurJoinGroupScreen()));
+  }
 
-  void _goToCreate() {}
+  void _goToCreate(BuildContext context) {
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => OurCreateGroupScreen()));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +49,7 @@ class OurNoGroupScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 FlatButton(
-                  onPressed: () => _goToCreate(),
+                  onPressed: () => _goToCreate(context),
                   child: Text("Create"),
                   color: Theme.of(context).canvasColor,
                   shape: RoundedRectangleBorder(
@@ -53,7 +61,7 @@ class OurNoGroupScreen extends StatelessWidget {
                   ),
                 ),
                 RaisedButton(
-                  onPressed: () => _goToJoin(),
+                  onPressed: () => _goToJoin(context),
                   child: Text(
                     "Join",
                     style: TextStyle(color: Colors.white),

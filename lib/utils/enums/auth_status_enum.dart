@@ -1,4 +1,6 @@
 enum OurAuthStatus {
-  AUTHENTICATED,
+  UNKNOWN,
+  NOT_IN_GROUP,
+  IN_GROUP,
   NOT_AUTHENTICATED,
 }

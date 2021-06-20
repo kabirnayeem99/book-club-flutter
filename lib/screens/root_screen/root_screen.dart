@@ -1,6 +1,7 @@
 import 'package:book_club_flutter/screens/home_screen/home_screen.dart';
 import 'package:book_club_flutter/screens/login_screen/login_screen.dart';
 import 'package:book_club_flutter/screens/no_group_screen/no_group_screen.dart';
+import 'package:book_club_flutter/screens/splash_screen/splash_screen.dart';
 import 'package:book_club_flutter/states/current_user.dart';
 import 'package:book_club_flutter/utils/enums/auth_status_enum.dart';
 import 'package:book_club_flutter/utils/resource.dart';
@@ -15,7 +16,7 @@ class OurRootScreen extends StatefulWidget {
 }
 
 class _OurRootScreenState extends State<OurRootScreen> {
-  OurAuthStatus _authStatus = OurAuthStatus.AUTHENTICATED;
+  OurAuthStatus _authStatus = OurAuthStatus.UNKNOWN;
 
   @override
   void didChangeDependencies() async {
@@ -24,9 +25,15 @@ class _OurRootScreenState extends State<OurRootScreen> {
     OurResource _resource = await _userState.onStartup();
 
     if (_resource is OurSuccess) {
-      setState(() {
-        _authStatus = OurAuthStatus.AUTHENTICATED;
-      });
+      if (_userState.getCurrentUser.groupId != null) {
+        setState(() {
+          _authStatus = OurAuthStatus.IN_GROUP;
+        });
+      } else {
+        setState(() {
+          _authStatus = OurAuthStatus.NOT_IN_GROUP;
+        });
+      }
     } else {
       setState(() {
         _authStatus = OurAuthStatus.NOT_AUTHENTICATED;
@@ -42,7 +49,9 @@ class _OurRootScreenState extends State<OurRootScreen> {
 
     if (_authStatus == OurAuthStatus.NOT_AUTHENTICATED) {
       shownWidget = OurLoginScreen();
-    } else if (_authStatus == OurAuthStatus.AUTHENTICATED) {
+    } else if (_authStatus == OurAuthStatus.NOT_IN_GROUP) {
+      shownWidget = OurNoGroupScreen();
+    } else if (_authStatus == OurAuthStatus.IN_GROUP) {
       shownWidget = OurHomeScreen();
     } else {
       shownWidget = OurLoginScreen();

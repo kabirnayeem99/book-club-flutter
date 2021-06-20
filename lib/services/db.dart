@@ -35,6 +35,7 @@ class OurDatabase {
       _user.fullName = _userMap["fullName"];
       _user.email = _userMap["email"];
       _user.accountCreated = _userMap["accountCreated"];
+      _user.groupId = _userMap["groupId"];
 
       return _resource = OurSuccess(_user);
     } catch (e) {
