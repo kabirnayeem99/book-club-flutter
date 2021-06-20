@@ -1,3 +1,4 @@
+import 'package:book_club_flutter/screens/no_group_screen/no_group_screen.dart';
 import 'package:book_club_flutter/screens/root_screen/root_screen.dart';
 import 'package:book_club_flutter/states/current_user.dart';
 import 'package:book_club_flutter/utils/resource.dart';
@@ -28,6 +29,15 @@ class OurHomeScreen extends StatelessWidget {
         ),
       );
     }
+  }
+
+  void _goToNoGroup(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => OurNoGroupScreen(),
+      ),
+    );
   }
 
   @override
@@ -139,7 +149,7 @@ class OurHomeScreen extends StatelessWidget {
               vertical: 20.0,
             ),
             child: RaisedButton(
-              onPressed: () => {},
+              onPressed: () => _goToNoGroup(context),
               child: Text("Book Club History"),
               color: Theme.of(context).canvasColor,
               elevation: 0.0,
