@@ -1,21 +1,23 @@
 import 'package:book_club_flutter/models/user.dart';
+import 'package:book_club_flutter/services/db.dart';
 import 'package:book_club_flutter/utils/resource.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class CurrentUserState extends ChangeNotifier {
-  OurUser? _currentUser;
+  OurUser _currentUser = OurUser();
 
-  OurUser? get getCurrentUser => _currentUser;
+  OurUser get getCurrentUser => _currentUser;
 
   FirebaseAuth _auth = FirebaseAuth.instance;
+  OurDatabase _db = OurDatabase();
 
   Future<OurResource> signOut() async {
     late OurResource _resource;
     try {
       await _auth.signOut();
-      _currentUser = null;
+      _currentUser = OurUser();
       _resource = OurSuccess(_currentUser);
     } catch (e) {
       _resource = OurError(e.toString());
@@ -34,8 +36,15 @@ class CurrentUserState extends ChangeNotifier {
     try {
       User? _user = _auth.currentUser;
       if (_user != null) {
-        _currentUser = OurUser(email: _user.email!, uid: _user.uid);
-        _resource = OurSuccess(_currentUser);
+        OurResource _userInfoResource = await _db.getUserInfoFromUid(_user.uid);
+
+        if (_userInfoResource is OurSuccess) {
+          _currentUser = _userInfoResource.successData;
+          print(_currentUser);
+          _resource = OurSuccess(_currentUser);
+        } else {
+          _resource = OurError(_userInfoResource.errorMessage!);
+        }
       } else {
         _resource = OurError("User is null");
       }
@@ -53,17 +62,25 @@ class CurrentUserState extends ChangeNotifier {
   /// Returns a Future OurResource class, which can be either OurSuccess
   /// with the returned data
   /// or can be OurError with a String Error message.
-  Future<OurResource> signUpUserWithEmail(String email, String password) async {
+  Future<OurResource> signUpUserWithEmail(
+      String email, String password, String fullName) async {
     late OurResource _resource;
     try {
       UserCredential _userCredential = await _auth
           .createUserWithEmailAndPassword(email: email, password: password);
 
       if (_userCredential.user != null) {
-        _currentUser = OurUser(
-          email: _userCredential.user!.email!,
+        _currentUser.email = _userCredential.user!.email!;
+        _currentUser.uid = _userCredential.user!.uid;
+
+        OurUser _registeredUser = OurUser(
           uid: _userCredential.user!.uid,
+          email: _userCredential.user!.email!,
+          fullName: fullName,
         );
+
+        _db.saveUserToDb(_registeredUser);
+
         _resource = OurSuccess(_currentUser);
       } else {
         _resource = OurError("Unknown error");
@@ -90,10 +107,8 @@ class CurrentUserState extends ChangeNotifier {
           email: email, password: password);
 
       if (_userCredential.user != null) {
-        _currentUser = OurUser(
-          email: _userCredential.user!.email!,
-          uid: _userCredential.user!.uid,
-        );
+        _currentUser.email = _userCredential.user!.email!;
+        _currentUser.uid = _userCredential.user!.uid;
         _resource = OurSuccess(_currentUser);
       } else {
         _resource = OurError("User is null");
@@ -136,9 +151,31 @@ class CurrentUserState extends ChangeNotifier {
           _resource = OurError("User is null");
         } else {
           if (_googleSignIn.currentUser?.email != null) {
-            _currentUser = OurUser(
-                email: _userCred.user!.email!, uid: _userCred.user!.uid);
-            _resource = OurSuccess(_userCred.user);
+            _currentUser.email = _userCred.user!.email!;
+            _currentUser.uid = _userCred.user!.uid;
+
+            OurUser _registeredUser = OurUser(
+              uid: _userCred.user!.uid,
+              email: _userCred.user!.email!,
+              fullName: _userCred.user!.displayName,
+            );
+
+            if (_userCred.additionalUserInfo != null &&
+                _userCred.additionalUserInfo!.isNewUser) {
+              _db.saveUserToDb(_registeredUser);
+            }
+
+            OurResource _newUserResource =
+                await _db.getUserInfoFromUid(_userCred.user!.uid);
+
+            if (_newUserResource is OurSuccess) {
+              _currentUser = _newUserResource.successData;
+              print(_currentUser);
+            } else {
+              _resource = OurError(_newUserResource.errorMessage!);
+            }
+
+            _resource = OurSuccess(_currentUser);
           }
         }
       } else {

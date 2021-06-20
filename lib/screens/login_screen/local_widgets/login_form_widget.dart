@@ -1,4 +1,5 @@
 import 'package:book_club_flutter/screens/home_screen/home_screen.dart';
+import 'package:book_club_flutter/screens/root_screen/root_screen.dart';
 import 'package:book_club_flutter/screens/signup_screen/signup_screen.dart';
 import 'package:book_club_flutter/states/current_user.dart';
 import 'package:book_club_flutter/utils/resource.dart';
@@ -29,7 +30,7 @@ class _OurLoginFormState extends State<OurLoginForm> {
       if (_logInResource is OurSuccess) {
         Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) => OurHomeScreen()),
+          MaterialPageRoute(builder: (context) => OurRootScreen()),
           (route) => false,
         );
       } else {

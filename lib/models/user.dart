@@ -1,15 +1,28 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class OurUser {
-  final String uid;
-  final String email;
+  String? uid;
+  String? email;
   String? fullName;
   Timestamp? accountCreated;
 
   OurUser({
-    required this.email,
+    this.email,
     this.fullName,
     this.accountCreated,
-    required this.uid,
+    this.uid,
   });
+
+  @override
+  String toString() {
+    String _userToString = "\n"
+        "\n=== USER INFO ===\n"
+        "email -> ${email ?? "No email"}\n"
+        "uid -> ${uid ?? "No uid"}\n"
+        "accountCreated -> ${accountCreated ?? "No account creation date"}\n"
+        "full name -> ${fullName ?? "No full Name"}\n"
+        "\n"
+        "\n";
+    return _userToString;
+  }
 }

@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 abstract class OurResource {
   String? errorMessage;
   dynamic successData;

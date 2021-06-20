@@ -1,29 +1,43 @@
 import 'package:book_club_flutter/states/current_user.dart';
 import 'package:book_club_flutter/utils/resource.dart';
-import 'package:book_club_flutter/utils/utilities.dart';
 import 'package:book_club_flutter/widgets/container.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class OurSignupFormWidget extends StatelessWidget {
+class OurSignupFormWidget extends StatefulWidget {
   const OurSignupFormWidget({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    TextEditingController _emailTec = TextEditingController();
-    TextEditingController _fullNameTec = TextEditingController();
-    TextEditingController _passwordTec = TextEditingController();
-    TextEditingController _confirmPasswordTec = TextEditingController();
+  _OurSignupFormWidgetState createState() => _OurSignupFormWidgetState();
+}
 
-    void _signUpUser(
-        String email, String password, BuildContext context) async {
+class _OurSignupFormWidgetState extends State<OurSignupFormWidget> {
+  TextEditingController _emailTec = TextEditingController();
+  TextEditingController _fullNameTec = TextEditingController();
+  TextEditingController _passwordTec = TextEditingController();
+  TextEditingController _confirmPasswordTec = TextEditingController();
+
+  @override
+  void dispose() {
+    _emailTec.dispose();
+    _fullNameTec.dispose();
+    _passwordTec.dispose();
+    _confirmPasswordTec.dispose();
+
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    void _signUpUser(String email, String password, String fullName,
+        BuildContext context) async {
       CurrentUserState _currentUserState =
           Provider.of<CurrentUserState>(context, listen: false);
 
       try {
-        OurResource _signUpResource =
-            await _currentUserState.signUpUserWithEmail(email, password);
+        OurResource _signUpResource = await _currentUserState
+            .signUpUserWithEmail(email, password, fullName);
 
         if (_signUpResource is OurSuccess) {
           Navigator.pop(context);
@@ -102,12 +116,15 @@ class OurSignupFormWidget extends StatelessWidget {
           RaisedButton(
             onPressed: () {
               if (_passwordTec.text == _confirmPasswordTec.text) {
-                if (_emailTec.text.trim().isNotEmpty) {
-                  _signUpUser(_emailTec.text, _passwordTec.text, context);
-                } else {
-                  final snackBar = SnackBar(content: Text("Email is empty."));
-                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                }
+                _signUpUser(
+                  _emailTec.text.toString(),
+                  _passwordTec.text.toString(),
+                  _fullNameTec.text.toString(),
+                  context,
+                );
+                debugPrint("email: ${_emailTec.text.toString()},\n "
+                    "password: ${_passwordTec.text.toString()}, \n"
+                    "full name: ${_fullNameTec.text.toString()},  \n");
               } else {
                 final snackBar =
                     SnackBar(content: Text("Password doesn't match."));
