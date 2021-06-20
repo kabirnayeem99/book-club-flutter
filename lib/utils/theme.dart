@@ -13,7 +13,7 @@ class OurTheme {
       buttonTheme: ButtonThemeData(
           buttonColor: _darkerGrey,
           padding: EdgeInsets.symmetric(horizontal: 20.0),
-          minWidth: 200.00,
+          minWidth: 160.00,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20.0),
           ),
