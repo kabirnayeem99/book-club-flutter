@@ -47,14 +47,14 @@ class _OurRootScreenState extends State<OurRootScreen> {
   Widget build(BuildContext context) {
     late Widget shownWidget;
 
-    if (_authStatus == OurAuthStatus.NOT_AUTHENTICATED) {
-      shownWidget = OurLoginScreen();
-    } else if (_authStatus == OurAuthStatus.NOT_IN_GROUP) {
+    if (_authStatus == OurAuthStatus.NOT_IN_GROUP) {
       shownWidget = OurNoGroupScreen();
     } else if (_authStatus == OurAuthStatus.IN_GROUP) {
       shownWidget = OurHomeScreen();
-    } else {
+    } else if (_authStatus == OurAuthStatus.NOT_AUTHENTICATED) {
       shownWidget = OurLoginScreen();
+    } else if (_authStatus == OurAuthStatus.UNKNOWN) {
+      shownWidget = OurSplashScreen();
     }
 
     return shownWidget;

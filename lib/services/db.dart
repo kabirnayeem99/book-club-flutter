@@ -43,4 +43,51 @@ class OurDatabase {
     }
     return _resource;
   }
+
+  Future<OurResource> createGroupInDb(String groupName, String userUid) async {
+    OurResource _resource;
+
+    try {
+      List<String> members = [userUid];
+
+      DocumentReference _docRef = await _firestore.collection("groups").add({
+        "name": groupName,
+        "leader": userUid,
+        "groupCreated": Timestamp.now(),
+        "members": members,
+      });
+
+      await _firestore
+          .collection("users")
+          .doc(userUid)
+          .update({"groupId": _docRef.id});
+
+      _resource = OurSuccess(_docRef);
+    } catch (e) {
+      _resource = OurError(e.toString());
+    }
+    return _resource;
+  }
+
+  Future<OurResource> joinGroup(String groupId, String userUid) async {
+    OurResource _resource;
+
+    try {
+      List<String> members = [userUid];
+
+      await _firestore.collection("groups").doc(groupId).update({
+        "members": FieldValue.arrayUnion(members),
+      });
+
+      await _firestore
+          .collection("users")
+          .doc(userUid)
+          .update({"groupId": groupId});
+
+      _resource = OurSuccess(null);
+    } catch (e) {
+      _resource = OurError(e.toString());
+    }
+    return _resource;
+  }
 }
